@@ -138,6 +138,17 @@ if cd == "d" or cd == "b":
     get_data_artifact()
 
 metadata['readme']=get_url("the README file that contains any remaining instructions about your artifact, either to the AEC or for future reuse.")
+metadata['hw']=get_blank("Please specify any special hw requirements for evaluators, such as CPU, GPU, memory, etc. [text, optional]")
+metadata['sw']=get_blank("Please specify any special sw requirements for evaluators, such as OS, paid software packages or software that requires a non-Linux environment to run [text, optional]")
+metadata['api']=get_blank("Please specify if your artifact needs API keys to access paid services online [text, optional]")
+while True:
+    gui=get_nonblank("Does your artifact require a GUI - [y]es or [n]o")
+    gui = gui.lower().strip()
+    if gui != "y" and gui != "n":
+        print("Valid respones only include [y] or [n]")
+    else:
+        break
+metadata['gui'] = gui
 
 print("\n\n=== PLEASE COPY/PASTE THE OUTPUT BELOW INTO THE HOTCRP ===")
 for m in metadata:
