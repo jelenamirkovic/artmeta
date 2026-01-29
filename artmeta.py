@@ -35,7 +35,7 @@ def get_blank(prompt):
 def get_nonblank_multi(prompt):
     while True:
         odata=""
-        data=input(prompt + " [text or URL, required] ")
+        data=input(prompt + " [text or URL, required, end-w-newline] ")
         while True:
             if data.strip() == "":
                 break
@@ -48,6 +48,19 @@ def get_nonblank_multi(prompt):
             print("This response cannot be blank.")
         else:
             break
+    return odata
+
+def get_blank_multi(prompt):
+    odata=""
+    data=input(prompt + " [text, optional, end-w-newline] ")
+    while True:
+        if data.strip() == "":
+            break
+        else:
+            if odata != "":
+                odata += "\n"
+            odata += data
+            data=input()
     return odata
 
 
@@ -87,6 +100,18 @@ def get_code_artifact(badge):
                 break
             num += 1
             
+    metadata['hw']=get_blank_multi("Please specify any special hw requirements for evaluators, such as CPU, GPU, memory, etc. ")
+    metadata['sw']=get_blank_multi("Please specify any special sw requirements for evaluators, such as OS, paid software packages or software that requires a non-Linux environment to run ")
+    metadata['api']=get_blank_multi("Please specify if your artifact needs API keys to access paid services online.")
+    while True:
+        gui=input("Does your artifact require a GUI - [y]es or [n]o ")
+        gui = gui.lower().strip()
+        if gui != "y" and gui != "n":
+            print("Valid respones only include [y] or [n]")
+        else:
+            break
+    metadata['gui'] = gui
+
     return
 
 
@@ -128,7 +153,7 @@ while True:
 
 metadata['cd'] = cd
 
-metadata['citation']=get_nonblank_multi("Please input your paper's citation in bibtex format. It is OK if this is an incomplete citation, e.g., missing a DOI or page numbers. End with an empty line.")
+metadata['citation']=get_nonblank_multi("Please input your paper's citation in bibtex format. It is OK if this is an incomplete citation, e.g., missing a DOI or page numbers. ")
 metadata['license_url']=input("Please provide a URL for the license you plan to use to release the artifact to the public. Leave blank if none. ")
 
 if cd == "c" or cd == "b":
@@ -138,19 +163,8 @@ if cd == "d" or cd == "b":
     get_data_artifact()
 
 metadata['readme']=get_url("the README file that contains any remaining instructions about your artifact, either to the AEC or for future reuse.")
-metadata['hw']=get_blank("Please specify any special hw requirements for evaluators, such as CPU, GPU, memory, etc. [text, optional]")
-metadata['sw']=get_blank("Please specify any special sw requirements for evaluators, such as OS, paid software packages or software that requires a non-Linux environment to run [text, optional]")
-metadata['api']=get_blank("Please specify if your artifact needs API keys to access paid services online [text, optional]")
-while True:
-    gui=get_nonblank("Does your artifact require a GUI - [y]es or [n]o")
-    gui = gui.lower().strip()
-    if gui != "y" and gui != "n":
-        print("Valid respones only include [y] or [n]")
-    else:
-        break
-metadata['gui'] = gui
 
 print("\n\n=== PLEASE COPY/PASTE THE OUTPUT BELOW INTO THE HOTCRP ===")
 for m in metadata:
-    print(m+":\""+metadata[m] + "\"")
+    print(m+":\""+metadata[m].replace('"', '\\"') + "\"")
 
