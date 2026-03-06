@@ -1,4 +1,5 @@
 from urllib.parse import urlparse
+from termcolor import colored
 import tomllib
 import tomli_w
 import pprint
@@ -100,22 +101,21 @@ def get_blank_multi(prompt, label):
 
 def existing_or_new(prompt, label):
     global metadata
-    print(prompt)
+    print(colored('\n' + prompt, 'blue'))
     if label in metadata:
-        print("You have already responded", metadata[label], "to this question. Press [ENTER] to keep your response or provide a new response")
+        print("You have already responded", colored(metadata[label], 'red'), "to this question. Press [ENTER] to keep your response or provide a new response")
         newi=input()
         if newi.strip() == "":
             return "KEEP"
         else:
             return newi.strip()
     else:
-        print(label, "is not in metadata", metadata)
         newi=input()
         return newi.strip()
 
 def get_code_artifact(badge):
     if badge == 'f' or badge == 'r':
-        pubpriv=input("Does your artifact use public infrastructure? [y]es or [n]o ")
+        pubpriv=input(colored("\nDoes your artifact use public infrastructure? [y]es or [n]o ", 'blue'))
 
         if pubpriv != "y" and pubpriv != "Y":
             pubpriv="n"
@@ -140,7 +140,7 @@ def get_code_artifact(badge):
             metadata['script'+str(num)]=get_url("the claim-running script or instructions.", 'script'+str(num))
             metadata['expected'+str(num)]=get_nonblank("Describe the expected outcome that would validate the claim. This can also be a pointer to a file in your repository", 'expected'+str(num))
             while True:
-                more=input("Do you have more claims? [y]es or [n]o ")
+                more=input(colored("\nDo you have more claims? [y]es or [n]o ", 'blue'))
                 more = more.lower().strip()
                 if more != "y" and more != "n":
                     print("Valid respones only include [y] or [n]")
@@ -169,7 +169,7 @@ def get_code_artifact(badge):
 
 def get_data_artifact():
     
-    survey=input("Does your artifact include only user survey instruments (without results)? [y]es or [n]o ")
+    survey=input(colored("\nDoes your artifact include only user survey instruments (without results)? [y]es or [n]o ", 'blue'))
 
     if survey!="y" and survey !="Y":
         survey="n"
@@ -192,8 +192,8 @@ if __name__ == "__main__":
         with open('metadata.toml', 'r') as file:
             content = file.read()
             metadata = tomllib.loads(content)
-            print("Parsed Dictionary:")
-            pprint.pprint(metadata)
+            #print("Parsed Dictionary:")
+            #pprint.pprint(metadata)
     except Exception as e:
         pass
             
@@ -227,7 +227,7 @@ if __name__ == "__main__":
     metadata['citation']=get_nonblank_multi("Please input your paper's citation in bibtex format. It is OK if this is an incomplete citation, e.g., missing a DOI or page numbers. ", 'citation')
     metadata['license_url']=get_blank_multi("Please provide a URL for the license you plan to use to release the artifact to the public. Leave blank if none. ", 'license_url')
 
-    if metadata['cd'] == "c" or metadata['cd'] == "b":
+    if (metadata['cd'] == "c" or metadata['cd'] == "b") and metadata['badge'] != 'a':
         get_code_artifact(metadata['badge'])
 
     if metadata['cd'] == "d" or metadata['cd'] == "b":
