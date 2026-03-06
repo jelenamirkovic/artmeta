@@ -1,0 +1,4 @@
+termcolor==3.3.0
+toml==0.10.2
+tomli==2.4.0
+tomli_w==1.2.0
